@@ -1,0 +1,10 @@
+TP 9
+
+PARTIE 1
+-ecrire les fichiers file.c et pile.c conformément aux fichiers file.h et pile.h 
+
+PARTIE 2
+-codez l'algo du poly pour parcourir le graphe qui affiche toutes les permutations d'une chaine de caractère de longueur maxi = à MAX
+
+PARTIE 3
+-généralisez le travail de la partie 2 aux échiquiers (affichage texte puis affichage sous forme d'échiquiers)
