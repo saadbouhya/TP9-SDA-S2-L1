@@ -3,6 +3,16 @@
 #include "pile.h"
 #include "file.h"
 #include <stdlib.h>
+#include <string.h>
+
+#define passerAuPremierFils(adrP,E) empiler(adrP,E)
+#define remonterAuPere(adrP,adrE) depiler(adrP,adrE)
+#define passerAuFrereSuivant(adrP,adrE) depiler(adrP,adrE),empiler(adrP,1+(*adrE))
+#define naPlusDeFrere(adrP,TailleChaine) sommet(adrP)==(int)TailleChaine
+#define noeudTerminal(adrP,TailleChaine) hauteur(adrP)==(int)TailleChaine
+#define rechercheTerminee(adrP) pilevide(adrP)
+
+
 
 
 int menu()
@@ -22,6 +32,9 @@ return choix;
 
 void testPile(T_Pile *P);
 void testFile(T_File *F);
+void permut(T_Pile *P, char chaine[20]);
+int pileValide(T_Pile *P);
+void afficherPermut(T_Pile *P, char chaine[20], int len);
 
 int main()
 {
@@ -29,7 +42,7 @@ T_File mafile;
 T_Pile mapile;
 int chx;
 // int taille;
-//char chaine[20];
+char chaine[20];
 
 do
 {
@@ -44,8 +57,9 @@ switch (chx)
 		testFile(&mafile); //TP9 partie 1 : à ecrire 
 		break; 
 	case 3 : 
-		//scanf("%s",chaine); //une chaine de longueur <=MAX
-		//permut(&mapile,chaine); //TP9 partie 2: ecrire permut
+		printf("Veuillez saisir la chaine: ");
+		scanf("%s",chaine); //une chaine de longueur <=MAX
+		permut(&mapile,chaine); //TP9 partie 2: ecrire permut
 		break;
 	case 4 : 
 		//scanf("%d",&taille);//taille echiquier <=MAX
@@ -154,6 +168,55 @@ void testFile(T_File *F) {
 }
 
 
+void permut(T_Pile *P, char chaine[20]) {
+	int compteur=0;
+	int *a;
+
+	do {
+		while (pileValide(P)) {
+			if (noeudTerminal(P, strlen(chaine))) {
+				afficherPermut(P, chaine, strlen(chaine));
+				compteur++;
+				break;
+			}
+			else {
+				passerAuPremierFils(P, 1);
+			}
+		}
+
+		while (rechercheTerminee(P) != 1 && naPlusDeFrere(P, strlen(chaine))) {
+			remonterAuPere(P,a);
+		}
+
+		if (rechercheTerminee(P) != 1) {
+			passerAuFrereSuivant(P,a);
+		}
+	} while(rechercheTerminee(P) != 1);
+	printf("\n");
+	printf("Le nombre de permutations possible est %d\n", compteur);
+}
+
+int pileValide(T_Pile *P) {
+	int i, j;
+
+	for(i=0;i<hauteur(P);i++) 
+	{
+		for(j=i+1;j<hauteur(P);j++) // comparer la pile et la chaine
+		{
+			if(P->Elts[i]==P->Elts[j]) // si élément similaire -> ne pas empiler
+			{
+				return 0;
+			}
+		}
+	}
+	return 1;
+}
+
+void afficherPermut(T_Pile *P, char chaine[20], int len) {
+	for (int i=1; i<=len; i++) {
+		printf("%c", chaine[P->Elts[i]]);
+	}
+	printf(" ");
+}
 
 
-//test
