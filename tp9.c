@@ -24,6 +24,7 @@ printf("\n\n\n 1 : tester mon fichier pile.c");
 printf("\n 2 : tester mon fichier file.c");
 printf("\n 3 : afficher et compter les permutations d'une chaine");
 printf("\n 4 : afficher et compter les solutions pour un échiquier ");
+printf("\n 5 : Tester Afficherpermut ");
 printf("\n 0 :  QUITTER  ");
 printf("\n votre choix ?  ");
 scanf("%d",&choix);
@@ -32,9 +33,10 @@ return choix;
 
 void testPile(T_Pile *P);
 void testFile(T_File *F);
-void permut(T_Pile *P, char chaine[20]);
+void permut(T_Pile P, char chaine[20]);
+//void permut(T_Pile *P,char *ch);
 int pileValide(T_Pile *P);
-void afficherPermut(T_Pile *P, char chaine[20], int len);
+//void afficherPermut(T_Pile *P, char chaine[20], int len);
 
 int main()
 {
@@ -59,7 +61,7 @@ switch (chx)
 	case 3 : 
 		printf("Veuillez saisir la chaine: ");
 		scanf("%s",chaine); //une chaine de longueur <=MAX
-		permut(&mapile,chaine); //TP9 partie 2: ecrire permut
+		permut(mapile,chaine); //TP9 partie 2: ecrire permut
 		break;
 	case 4 : 
 		//scanf("%d",&taille);//taille echiquier <=MAX
@@ -86,7 +88,7 @@ void testPile(T_Pile *P) {
 	printf("5. La hauteur de la pile.\n");
 	printf("6. Est-ce que la pile est vide.\n");
 	printf("7. Est-ce que la pile pleine.\n");
-	printf("8. quitter\n");
+	printf("0. quitter\n");
 	int choix, valeur;
 
 	while(1) {
@@ -116,7 +118,7 @@ void testPile(T_Pile *P) {
 							else 
 								printf("Pile non pleine.\n");
 							break;
-			case 8: exit(0);
+			case 0: exit(0);
 			default: printf("Choix invalide\n"); 
 
 		}
@@ -168,55 +170,116 @@ void testFile(T_File *F) {
 }
 
 
-void permut(T_Pile *P, char chaine[20]) {
+void permut(T_Pile P, char *chaine) {
 	int compteur=0;
-	int *a;
+	T_Elt a;
 
 	do {
-		while (pileValide(P)) {
-			if (noeudTerminal(P, strlen(chaine))) {
-				afficherPermut(P, chaine, strlen(chaine));
+		while (pileValide(&P)) {
+			if (noeudTerminal(&P, strlen(chaine))) {
+				for (int i=0; i < (P.nbElts); i++) {
+					printf("%c", chaine[(P.Elts[i])-1]);
+				}
+				printf(" ");
 				compteur++;
 				break;
 			}
 			else {
-				passerAuPremierFils(P, 1);
+				passerAuPremierFils(&P, 1);
 			}
 		}
 
-		while (rechercheTerminee(P) != 1 && naPlusDeFrere(P, strlen(chaine))) {
-			remonterAuPere(P,a);
+		while (rechercheTerminee(&P) != 1 && naPlusDeFrere(&P, strlen(chaine))) {
+			remonterAuPere(&P,&a);
 		}
 
-		if (rechercheTerminee(P) != 1) {
-			passerAuFrereSuivant(P,a);
+		if (rechercheTerminee(&P) != 1) {
+			passerAuFrereSuivant(&P,&a);
 		}
-	} while(rechercheTerminee(P) != 1);
+	} while(rechercheTerminee(&P) != 1);
 	printf("\n");
 	printf("Le nombre de permutations possible est %d\n", compteur);
 }
 
-int pileValide(T_Pile *P) {
-	int i, j;
+// int pileValide(T_Pile *P) {
+// 	int i, j;
 
-	for(i=0;i<hauteur(P);i++) 
+// 	for(i=0;i<hauteur(P);i++) 
+// 	{
+// 		for(j=i+1;j<hauteur(P);j++) // comparer la pile et la chaine
+// 		{
+// 			if(P->Elts[i]==P->Elts[j]) // si élément similaire -> ne pas empiler
+// 			{
+// 				return 0;
+// 			}
+// 		}
+// 	}
+// 	return 1;
+// }
+
+int pileValide(T_Pile *P)
+{
+	int i=0,j,trouve=0;
+	while(i<P->nbElts-1 && trouve==0)
 	{
-		for(j=i+1;j<hauteur(P);j++) // comparer la pile et la chaine
+		j=i+1;
+		while(j<P->nbElts && trouve==0)
 		{
-			if(P->Elts[i]==P->Elts[j]) // si élément similaire -> ne pas empiler
-			{
-				return 0;
-			}
+			if(P->Elts[i]==P->Elts[j])
+				trouve++;
+
+			j++;
 		}
+		i++;
 	}
-	return 1;
+	if(trouve>0)
+		return 0;
+
+	else
+		return 1;
+
 }
 
-void afficherPermut(T_Pile *P, char chaine[20], int len) {
-	for (int i=1; i<=len; i++) {
-		printf("%c", chaine[P->Elts[i]]);
+// void afficherPermut(T_Pile *P, char chaine[20], int len) {
+// 	for (int i=1; i<=len; i++) {
+// 		printf("%c", chaine[P->Elts[i]]);
+// 	}
+// 	printf(" ");
+// }
+
+
+/*void permut(T_Pile *P,char *ch)
+{
+	T_Elt E;
+
+	int end=0,cpt=0,k=0;	
+	do
+	{
+	end=0;
+	while(pileValide(P)==1 && end==0){	
+		if(noeudTerminal(P,strlen(ch))){
+			for(k=0;k<P->nbElts;k++)
+			{
+				printf("%c",ch[P->Elts[k]-1]);
+			}
+			
+			printf(" - ");			
+			end=1;	
+			cpt++;	
+		}
+		else
+		{
+	
+		passerAuPremierFils(P,1);
+		}	
 	}
-	printf(" ");
-}
+	while(!rechercheTerminee(P) && naPlusDeFrere(P,strlen(ch))){
+		 remonterAuPere(P,&E); 
+	}
+	if(!rechercheTerminee(P)){
+		 passerAuFrereSuivant(P,&E);
+	}	
 
-
+} while(!rechercheTerminee(P));
+	printf("\n Il y a %d permutations. \n",cpt);
+}*/

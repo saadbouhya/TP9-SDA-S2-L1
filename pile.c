@@ -37,7 +37,7 @@ int empiler( T_Pile *P, T_Elt e) //renvoie 0 si pile pleine, sinon 1
   }
 
   (P->nbElts)++;
-  P->Elts[P->nbElts] = e;
+  P->Elts[(P->nbElts)-1] = e;
   return 1;
 }
 
@@ -49,7 +49,7 @@ int depiler( T_Pile *P, T_Elt *pelt)  //renvoie 0 si pile vide, sinon 1
     return 0;
   }
 
-  *pelt = P->Elts[P->nbElts];
+  *pelt = P->Elts[(P->nbElts)-1];
   (P->nbElts)--;
   return 1;
 }
@@ -58,7 +58,7 @@ int depiler( T_Pile *P, T_Elt *pelt)  //renvoie 0 si pile vide, sinon 1
 
 T_Elt sommet(const  T_Pile *P)
 {
- return P->Elts[P->nbElts];
+ return P->Elts[(P->nbElts)-1];
 }
 
 
