@@ -37,13 +37,15 @@ void permut(T_Pile P, char chaine[20]);
 //void permut(T_Pile *P,char *ch);
 int pileValide(T_Pile *P);
 //void afficherPermut(T_Pile *P, char chaine[20], int len);
+void permutEch(T_Pile P, int taille);
+int echValide(T_Pile *P);
 
 int main()
 {
 T_File mafile;
 T_Pile mapile;
 int chx;
-// int taille;
+int taille;
 char chaine[20];
 
 do
@@ -64,8 +66,8 @@ switch (chx)
 		permut(mapile,chaine); //TP9 partie 2: ecrire permut
 		break;
 	case 4 : 
-		//scanf("%d",&taille);//taille echiquier <=MAX
-		//echiquier(&mapile,taille); //TP9 partie 3: ecrire echiquier
+		scanf("%d",&taille);//taille echiquier <=MAX
+		permutEch(mapile,taille); //TP9 partie 3: ecrire echiquier
 		break;
 
 
@@ -237,7 +239,6 @@ int pileValide(T_Pile *P)
 
 	else
 		return 1;
-
 }
 
 // void afficherPermut(T_Pile *P, char chaine[20], int len) {
@@ -283,3 +284,46 @@ int pileValide(T_Pile *P)
 } while(!rechercheTerminee(P));
 	printf("\n Il y a %d permutations. \n",cpt);
 }*/
+void permutEch(T_Pile P, int taille) {
+	int compteur=0;
+	T_Elt a;
+
+	do {
+		while (echValide(&P)) {
+			if (noeudTerminal(&P, taille)) {
+				for (int i=0; i < (P.nbElts); i++) {
+					printf("%d", P.Elts[i]);
+				}
+				printf(" ");
+				compteur++;
+				break;
+			}
+			else {
+				passerAuPremierFils(&P, 1);
+			}
+		}
+
+		while (rechercheTerminee(&P) != 1 && naPlusDeFrere(&P, 4)) {
+			remonterAuPere(&P,&a);
+		}
+
+		if (rechercheTerminee(&P) != 1) {
+			passerAuFrereSuivant(&P,&a);
+		}
+	} while(rechercheTerminee(&P) != 1);
+	printf("\n");
+	printf("Le nombre de permutations possible est %d\n", compteur);
+}
+
+int echValide(T_Pile *P) {
+	int i, j;
+
+	for(i=1; i<hauteur(P); i++) 
+	{
+			if(P->Elts[i]==P->Elts[i-1] || P->Elts[i]==(P->Elts[i-1]+1) || P->Elts[i]==(P->Elts[i-1]-1))
+			{
+				return 0;
+			}
+	}
+	return 1;
+}
